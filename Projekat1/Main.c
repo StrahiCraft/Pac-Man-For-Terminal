@@ -1,18 +1,26 @@
 #include <stdio.h>
-#include "Player.h"
+#include <Windows.h>
+#include <stdlib.h>
 
-#define ANSI_COLOR_RED     "\x1b[31m"
-#define ANSI_COLOR_RESET   "\x1b[0m"
+#include "Player.h"
+#include "Render.h"
 
 int main() {
-	printf(ANSI_COLOR_RED     "This text is RED!"     ANSI_COLOR_RESET "\n");
-
 	int input = 0;
+	setupPlayer();
 
 	while (input != 'q' && input != 27)
 	{
-		input = getch();
+		if (kbhit()) {
+			input = getch();
+		}
 		handleInput(input);
+		movePlayer();
+
+		renderGame();
+
+		Sleep(200);
+		system("cls");
 	}
 	return 0;
 }

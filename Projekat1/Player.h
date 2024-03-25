@@ -1,8 +1,20 @@
-#ifdef PLAYER_H_
+#ifndef PLAYER_H_
 #define PLAYER_H_
+#include "Vectors.h"
 
-void handleInput(char);
-void movePlayer(char*);
+typedef enum Direction {
+	UP,
+	DOWN,
+	LEFT,
+	RIGHT
+}Direction;
 
-#endif // PLAYER_H_
+void setupPlayer();
+void handleInput(char input);
+void movePlayer(char* newPositionAdress);
+void getPlayerPos(Vector2*);
+void setPlayerPos(int x, int y);
+Direction getPlayerDirection();
+
+#endif
 
