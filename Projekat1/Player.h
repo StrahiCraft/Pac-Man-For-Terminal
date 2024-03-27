@@ -11,7 +11,7 @@ typedef enum Direction {
 
 void setupPlayer();
 void handleInput(char input);
-void movePlayer(char* newPositionAdress);
+void movePlayer();
 void getPlayerPos(Vector2*);
 void setPlayerPos(int x, int y);
 Direction getPlayerDirection();

@@ -16,7 +16,7 @@
 // when rendering space out the columns
 // # is a wall, . is a pellet, o is a power pellet
 
-char *map[] = {
+char map[29][29] = {
 	"############################",// 0
 	"#............##............#",// 1
 	"#.####.#####.##.#####.####.#",// 2
@@ -63,6 +63,9 @@ void renderGame() {
 			if (playerPos->x == xPos && playerPos->y == y) {
 				renderPlayer(getPlayerDirection());
 				x++;
+				if (*x == '\0') {
+					break;
+				}
 			}
 
 			switch (*x)
@@ -105,4 +108,12 @@ void renderPlayer(Direction direction) {
 
 void renderGhost(Vector2 position, int ghostId) {
 
+}
+
+char getCell(int x, int y) {
+	return *(map[y] + x);
+}
+
+void setCell(int x, int y) {
+	*(map[y] + x) = ' ';
 }

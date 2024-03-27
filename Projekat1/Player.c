@@ -1,5 +1,7 @@
 #include "Player.h"
 #include "Vectors.h"
+#include "Render.h"
+
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -33,9 +35,54 @@ void handleInput(char input) {
 	}
 }
 
-void movePlayer(char* newPositionAdress) {
-	if (*newPositionAdress == '#') {
-		return;
+void movePlayer() {
+	switch (currentDirection)
+	{
+	case UP:
+		if (getCell(playerPos.x, playerPos.y - 1) == '#') {
+			return;
+		}
+		playerPos.y--;
+		break;
+	case DOWN:
+		if (getCell(playerPos.x, playerPos.y + 1) == '#') {
+			return;
+		}
+		playerPos.y++;
+		break;
+	case LEFT:
+		if (getCell(playerPos.x - 1, playerPos.y) == '#') {
+			return;
+		}
+		playerPos.x--;
+		break;
+	case RIGHT:
+		if (getCell(playerPos.x + 1, playerPos.y) == '#') {
+			printf("%c", getCell(playerPos.x, playerPos.y));
+			return;
+		}
+		playerPos.x++;
+		break;
+	default:
+		break;
+	}
+
+	if (playerPos.x < 0) {
+		playerPos.x = 27;
+	}
+
+
+	playerPos.x %= 28;
+	playerPos.y %= 28;
+
+	if (getCell(playerPos.x, playerPos.y) == '.') {
+		setCell(playerPos.x, playerPos.y);
+		// increase score
+	}
+
+	if (getCell(playerPos.x, playerPos.y) == 'o') {
+		setCell(playerPos.x, playerPos.y);
+		// big strong mode activate
 	}
 }
 
