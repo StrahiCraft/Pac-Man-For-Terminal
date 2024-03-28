@@ -1,6 +1,6 @@
 #include "Player.h"
 #include "Vectors.h"
-#include "Render.h"
+#include "Map.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -11,8 +11,6 @@ Vector2 playerPos;
 void setupPlayer() {
 	playerPos.x = 13;
 	playerPos.y = 18;
-
-	printf("%d %d", playerPos.x, playerPos.y);
 }
 
 void handleInput(char input) {
@@ -39,26 +37,29 @@ void movePlayer() {
 	switch (currentDirection)
 	{
 	case UP:
-		if (getCell(playerPos.x, playerPos.y - 1) == '#') {
+		if (getCell(playerPos.x, playerPos.y - 1) == '#' ||
+			getCell(playerPos.x, playerPos.y - 1) == '_') {
 			return;
 		}
 		playerPos.y--;
 		break;
 	case DOWN:
-		if (getCell(playerPos.x, playerPos.y + 1) == '#') {
+		if (getCell(playerPos.x, playerPos.y + 1) == '#' ||
+			getCell(playerPos.x, playerPos.y + 1) == '_') {
 			return;
 		}
 		playerPos.y++;
 		break;
 	case LEFT:
-		if (getCell(playerPos.x - 1, playerPos.y) == '#') {
+		if (getCell(playerPos.x - 1, playerPos.y) == '#' ||
+			getCell(playerPos.x - 1, playerPos.y) == '_') {
 			return;
 		}
 		playerPos.x--;
 		break;
 	case RIGHT:
-		if (getCell(playerPos.x + 1, playerPos.y) == '#') {
-			printf("%c", getCell(playerPos.x, playerPos.y));
+		if (getCell(playerPos.x + 1, playerPos.y) == '#' || 
+			getCell(playerPos.x + 1, playerPos.y) == '_') {
 			return;
 		}
 		playerPos.x++;
@@ -86,10 +87,6 @@ void movePlayer() {
 	}
 }
 
-void getPlayerPos(Vector2** pos) {
-	*pos = &playerPos;
-}
-
 void setPlayerPos(int x, int y) {
 	playerPos.x = x;
 	playerPos.y = y;
@@ -97,4 +94,8 @@ void setPlayerPos(int x, int y) {
 
 Direction getPlayerDirection() {
 	return currentDirection;
+}
+
+int isPlayerHere(int x, int y) {
+	return x == playerPos.x && y == playerPos.y;
 }

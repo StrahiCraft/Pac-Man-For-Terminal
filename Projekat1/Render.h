@@ -3,10 +3,10 @@
 #include "Vectors.h"
 #include "Player.h"
 
+void setupMap();
 void renderGame();
 void renderPlayer(Direction direction);
 void renderGhost(Vector2 position, int ghostId);
-char getCell(int x, int y);
-void setCell(int x, int y);
+
 
 #endif 
