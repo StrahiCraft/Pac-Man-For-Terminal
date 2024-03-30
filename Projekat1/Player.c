@@ -6,6 +6,7 @@
 #include <stdio.h>
 
 Direction currentDirection = RIGHT;
+Direction nextDirection = RIGHT;
 Vector2 playerPos;
 
 void setupPlayer() {
@@ -17,20 +18,58 @@ void handleInput(char input) {
 	switch (input)
 	{
 	case 'w':
-		currentDirection = UP;
+		changeDirection(UP);
 		break;
 	case 'a':
-		currentDirection = LEFT;
+		changeDirection(LEFT);
 		break;
 	case 's':
-		currentDirection = DOWN;
+		changeDirection(DOWN);
 		break;
 	case 'd':
-		currentDirection = RIGHT;
+		changeDirection(RIGHT);
 		break;
 	default:
 		break;
 	}
+}
+
+void changeDirection(Direction dir) {
+	switch (dir)
+	{
+	case UP:
+		if (getCell(playerPos.x, playerPos.y - 1) == '#' ||
+			getCell(playerPos.x, playerPos.y - 1) == '_') {
+			nextDirection = dir;
+			return;
+		}
+		break;
+	case DOWN:
+		if (getCell(playerPos.x, playerPos.y + 1) == '#' ||
+			getCell(playerPos.x, playerPos.y + 1) == '_') {
+			nextDirection = dir;
+			return;
+		}
+		break;
+	case LEFT:
+		if (getCell(playerPos.x - 1, playerPos.y) == '#' ||
+			getCell(playerPos.x - 1, playerPos.y) == '_') {
+			nextDirection = dir;
+			return;
+		}
+		break;
+	case RIGHT:
+		if (getCell(playerPos.x + 1, playerPos.y) == '#' ||
+			getCell(playerPos.x + 1, playerPos.y) == '_') {
+			nextDirection = dir;
+			return;
+		}
+		break;
+	default:
+		break;
+	}
+	currentDirection = dir;
+	nextDirection = currentDirection;
 }
 
 void movePlayer() {
@@ -69,12 +108,16 @@ void movePlayer() {
 	}
 
 	if (playerPos.x < 0) {
-		playerPos.x = 27;
+		playerPos.x = getWidth() - 2;
+	}
+
+	if (playerPos.y < 0) {
+		playerPos.y = getHeight() - 2;
 	}
 
 
-	playerPos.x %= 28;
-	playerPos.y %= 28;
+	playerPos.x %= getWidth() - 1;
+	playerPos.y %= getHeight() - 1;
 
 	if (getCell(playerPos.x, playerPos.y) == '.') {
 		setCell(playerPos.x, playerPos.y);
@@ -94,6 +137,10 @@ void setPlayerPos(int x, int y) {
 
 Direction getPlayerDirection() {
 	return currentDirection;
+}
+
+Direction getNextDirection() {
+	return nextDirection;
 }
 
 int isPlayerHere(int x, int y) {

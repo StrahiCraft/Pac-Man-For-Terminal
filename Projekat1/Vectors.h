@@ -6,4 +6,6 @@ typedef struct Vector2 {
 	int y;
 }Vector2;
 
+int distance(Vector2 a, Vector2 b);
+
 #endif

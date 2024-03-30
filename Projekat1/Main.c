@@ -20,10 +20,11 @@ int main() {
 		}
 		handleInput(input);
 		movePlayer();
+		changeDirection(getNextDirection());
 
 		renderGame();
 
-		Sleep(100);
+		Sleep(200);
 		system("cls");
 	}
 	return 0;

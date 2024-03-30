@@ -127,6 +127,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Ghosts.c" />
     <ClCompile Include="Main.c" />
     <ClCompile Include="Map.c" />
     <ClCompile Include="Player.c" />
@@ -134,6 +135,7 @@
     <ClCompile Include="Vectors.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Ghosts.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Render.h" />
