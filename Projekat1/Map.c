@@ -3,6 +3,7 @@
 #endif
 
 #include "Map.h"
+#include "Ghosts.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -27,10 +28,15 @@ void loadMap(char* name) {
 	}
 
 	map = calloc(width * height + 1, sizeof(char));
+	int ghostId = 1;
 
 	for (int y = 0; y < height; y++) {
 		for (int x = 0; x < width; x++) {
 			*(map + width * y + x) = fgetc(mapFile);
+			if (*(map + width * y + x) == 'G') {
+				setupGhost(ghostId, x, y);
+				ghostId++;
+			}
 		}
 	}
 

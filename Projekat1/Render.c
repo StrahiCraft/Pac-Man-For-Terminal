@@ -2,6 +2,7 @@
 #include "Vectors.h"
 #include "Player.h"
 #include "Map.h"
+#include "Ghosts.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -13,6 +14,12 @@
 #define BLUE "\x1b[34m"
 #define WHITE "\x1b[97m"
 #define YELLOW "\x1b[93m"
+
+// ghost colors
+#define RED "\x1b[91m"
+#define CYAN "\x1b[96m"
+#define PINK "\x1b[95m"
+#define ORANGE "\x1b[33m"
 
 Vector2 mapDimensions;
 
@@ -34,6 +41,14 @@ void renderGame() {
 				}
 			}
 
+			if (isGhostHere(x, y)) {
+				renderGhost(isGhostHere(x, y));
+				x++;
+				if (x >= mapDimensions.x) {
+					break;
+				}
+			}
+
 			switch (getCell(x, y))
 			{
 			case '#':
@@ -41,6 +56,9 @@ void renderGame() {
 				break;
 			case '.':
 				printf(WHITE ". " RESET_COLOR);
+				break;
+			case 'G':
+				printf("  ");
 				break;
 			default:
 				printf(WHITE "%c " RESET_COLOR, getCell(x, y));
@@ -70,6 +88,22 @@ void renderPlayer(Direction direction) {
 	}
 }
 
-void renderGhost(Vector2 position, int ghostId) {
-
+void renderGhost(int ghostId) {
+	switch (ghostId)
+	{
+	case 1:
+		printf(RED "M " RESET_COLOR);
+		break;
+	case 2:
+		printf(PINK "M " RESET_COLOR);
+		break;
+	case 3:
+		printf(CYAN "M " RESET_COLOR);
+		break;
+	case 4:
+		printf(ORANGE "M " RESET_COLOR);
+		break;
+	default:
+		break;
+	}
 }

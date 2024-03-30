@@ -130,6 +130,10 @@ void movePlayer() {
 	}
 }
 
+Vector2 getPlayerPos() {
+	return playerPos;
+}
+
 void setPlayerPos(int x, int y) {
 	playerPos.x = x;
 	playerPos.y = y;

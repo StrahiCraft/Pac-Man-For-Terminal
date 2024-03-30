@@ -13,6 +13,7 @@ void setupPlayer();
 void handleInput(char input);
 void changeDirection(Direction dir);
 void movePlayer();
+Vector2 getPlayerPos();
 void setPlayerPos(int x, int y);
 Direction getPlayerDirection();
 Direction getNextDirection();

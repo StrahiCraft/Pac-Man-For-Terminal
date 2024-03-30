@@ -6,6 +6,6 @@
 void setupMap();
 void renderGame();
 void renderPlayer(Direction direction);
-void renderGhost(Vector2 position, int ghostId);
+void renderGhost(int ghostId);
 
 #endif 
