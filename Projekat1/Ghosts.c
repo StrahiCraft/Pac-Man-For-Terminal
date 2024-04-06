@@ -2,7 +2,9 @@
 #include "Vectors.h"
 #include "Map.h"
 #include "Player.h"
+#include "Queue.h"
 
+#include <stdio.h>
 #include <stdlib.h>
 
 Vector2 blinkyPos;
@@ -12,18 +14,12 @@ Vector2 clydePos;
 
 Vector2 ghostSpawns[4];
 
-Vector2 blinkyPath[16];
-int blinkyPathToPacDistance;
-int blinkyCanMove = 0;
-Vector2 pinkyPath[16];
-Vector2 inkyPath[16];
-Vector2 clydePath[16];
-int movementIndex = 0;
+Vector2* blinkyPath;
+int movementIndex = -1;
 
-Vector2 currentPath[16];
-Vector2 *exploredTiles;
+ExploredTile* exploredTiles;
+
 int exploredTilesIndex = 0;
-int bestPathLength = 2147483647;
 
 void setupGhost(int ghostId, int x, int y) {
 	switch (ghostId)
@@ -31,6 +27,7 @@ void setupGhost(int ghostId, int x, int y) {
 	case 1:
 		blinkyPos.x = x;
 		blinkyPos.y = y;
+		blinkyPath = (Vector2*)calloc(0, sizeof(Vector2));
 		break;
 	case 2:
 		pinkyPos.x = x;
@@ -52,22 +49,16 @@ void setupGhost(int ghostId, int x, int y) {
 }
 
 void moveBlinky() {
-	if (movementIndex == 16) {
-		bestPathLength = 2147483647;
-		Vector2 playerPos = getPlayerPos();
-		pathfind(blinkyPos, playerPos, 0, blinkyPath);
+	if (movementIndex != -1 && distance(blinkyPos, getPlayerPos()) < distance(getPlayerPos(), blinkyPath[0])) {
 		movementIndex = 0;
-		blinkyCanMove = 1;
 	}
-	if (!blinkyCanMove) {
-		movementIndex++;
-		return;
+	if (movementIndex < 0) {
+		refreshExploredTiles();
+		free(blinkyPath);
+		blinkyPath = (Vector2*)calloc(getHeight() * getWidth(), sizeof(Vector2));
+		movementIndex = pathfind(blinkyPos, getPlayerPos(), blinkyPath) - 1;
 	}
-	blinkyPos = blinkyPath[movementIndex++];
-}
-
-Vector2 getPos() {
-	return blinkyPos;
+	blinkyPos = *(blinkyPath + movementIndex--);
 }
 
 void movePinky() {
@@ -99,66 +90,98 @@ int isGhostHere(int x, int y) {
 }
 
 void refreshExploredTiles() {
+	exploredTilesIndex = 0;
+	clearQueue();
 	free(exploredTiles);
-	exploredTiles = (Vector2*)malloc(576);
+	int maxTileCount = getHeight() * getWidth();
+	exploredTiles = (ExploredTile*)calloc(maxTileCount, sizeof(ExploredTile));
 }
 
 int isTileExplored(Vector2 tile) {
-	for (int i = 0; i < 576; i++) {
-		if (tile.x == (exploredTiles + i)->x && tile.y == (exploredTiles + i)->y) {
+	for (int i = 0; i < exploredTilesIndex; i++) {
+ 		if (tile.x == exploredTiles[i].position.x && tile.y == exploredTiles[i].position.y) {
 			return 1;
 		}
 	}
 	return 0;
 }
 
-void pathfind(Vector2 startPos, Vector2 endPos, int iteration, Vector2* ghostPath) {
-	if (iteration == 16 || (startPos.x == endPos.x && startPos.y == endPos.y)) {
-		if (distance(startPos, endPos) < bestPathLength) {
-			bestPathLength = distance(startPos, endPos);
-			for (int i = 0; i < 16; i++){
-				*(ghostPath + i) = currentPath[i];
-			}
+int getTileAdress(Vector2 pos) {
+	for (int i = 0; i < exploredTilesIndex; i++) {
+		if (pos.x == exploredTiles[i].position.x && pos.y == exploredTiles[i].position.y) {
+			return i;
 		}
-		return;
+	}
+	return 0;
+}
+
+int pathfind(Vector2 startPos, Vector2 endPos, Vector2* ghostPath) {
+	enqueue(startPos);
+	exploredTiles[exploredTilesIndex++].position = startPos;
+	while (getQueueLength() > 0)
+	{
+		Vector2 newPos = dequeue();
+		ExploredTile* currentTile = &exploredTiles[getTileAdress(newPos)];
+
+		if (newPos.x == endPos.x && newPos.y == endPos.y) {
+			break;
+		}
+
+		newPos.y--;
+		if (explore(newPos, endPos, currentTile)) {
+			break;
+		}
+		newPos.y += 2;
+		if (explore(newPos, endPos, currentTile)) {
+			break;
+		}
+		newPos.y--;
+		newPos.x--;
+		if (explore(newPos, endPos, currentTile)) {
+			break;
+		}
+		newPos.x += 2;
+		if (explore(newPos, endPos, currentTile)) {
+			break;
+		}
+	}
+	ExploredTile* currentTile = &exploredTiles[exploredTilesIndex - 1];
+	int iteration = 0;
+	while (currentTile->origin != NULL)
+	{
+		ghostPath[iteration++] = currentTile->position;
+		currentTile = currentTile->origin;
+	}
+	return iteration;
+}
+
+int explore(Vector2 newPos, Vector2 endPos, ExploredTile* origin) {
+	if (getCell(newPos.x, newPos.y) == '#') {
+		return 0;
+	}
+	if (isTileExplored(newPos)) {
+		return 0;
 	}
 
-	/*if (isTileExplored(startPos)) {
-		return;
-	}*/
+	if (newPos.y < 0) {
+		newPos.y = getHeight() - 2;
+	}
+	if (newPos.x < 0) {
+		newPos.x = getWidth() - 2;
+	}
 
-	Vector2 newPos = startPos;
-	// UP
-	if (getCell(startPos.x, startPos.y - 1) != '#') {
-		newPos.y = startPos.y - 1;
-		if (newPos.y < 0) {
-			newPos.y = getHeight() - 2;
-		}
-		currentPath[iteration] = newPos;
-		pathfind(newPos, endPos, iteration + 1, ghostPath);
+	newPos.y %= getHeight() - 1;
+	newPos.x %= getWidth() - 1;
+
+	exploredTiles[exploredTilesIndex].position = newPos;
+	exploredTiles[exploredTilesIndex].origin = origin;
+	exploredTilesIndex++;
+
+	if (newPos.x == endPos.x && newPos.y == endPos.y) {
+		return 1;
 	}
-	// DOWN
-	if (getCell(startPos.x, startPos.y + 1) != '#') {
-		newPos.y = startPos.y + 1;
-		newPos.y %= getHeight() - 1;
-		currentPath[iteration] = newPos;
-		pathfind(newPos, endPos, iteration + 1, ghostPath);
-	}
-	newPos.y = startPos.y;
-	// LEFT
-	if (getCell(startPos.x - 1, startPos.y) != '#') {
-		newPos.x = startPos.x - 1;
-		if (newPos.x < 0) {
-			newPos.x = getWidth() - 2;
-		}
-		currentPath[iteration] = newPos;
-		pathfind(newPos, endPos, iteration + 1, ghostPath);
-	}
-	// RIGHT
-	if (getCell(startPos.x + 1, startPos.y) != '#') {
-		newPos.x = startPos.x + 1;
-		newPos.x %= getWidth() - 1;
-		currentPath[iteration] = newPos;
-		pathfind(newPos, endPos, iteration + 1, ghostPath);
-	}
+
+	enqueue(newPos);
+
+	return 0;
 }

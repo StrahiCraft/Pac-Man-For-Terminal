@@ -24,7 +24,6 @@ int main() {
 		changeDirection(getNextDirection());
 
 		moveBlinky();
-		printf("ghost test X = %d Y = %d\n", getPos().x, getPos().y);
 
 		renderGame();
 

@@ -8,6 +8,11 @@ typedef enum GhostMode {
 	FRIGHTENED
 }GhostMode;
 
+typedef struct ExploredTile {
+	Vector2 position;
+	struct ExploredTile* origin;
+}ExploredTile;
+
 void setupGhost(int ghostId, int x, int y);
 
 void moveBlinky();
@@ -18,7 +23,8 @@ void moveClyde();
 int isGhostHere(int x, int y);
 void refreshExploredTiles();
 int isTileExplored(Vector2 tile);
-void pathfind(Vector2 startPos, Vector2 endPos, int iteration, Vector2* ghostPath);
+int getTileAdress(Vector2 pos);
+int pathfind(Vector2 startPos, Vector2 endPos, Vector2* ghostPath);
+int explore(Vector2 newPos, Vector2 endPos, ExploredTile* origin);
 
-Vector2 getPos();
 #endif // !GHOSTS_H_
