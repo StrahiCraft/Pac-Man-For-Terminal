@@ -10,18 +10,22 @@
 
 // colors
 #define RESET_COLOR   "\x1b[0m"
-
-#define BLUE "\x1b[34m"
-#define WHITE "\x1b[97m"
-#define YELLOW "\x1b[93m"
+#define BLUE		  "\x1b[34m"
+#define WHITE		  "\x1b[97m"
+#define YELLOW        "\x1b[93m"
 
 // ghost colors
-#define RED "\x1b[91m"
-#define CYAN "\x1b[96m"
-#define PINK "\x1b[95m"
-#define ORANGE "\x1b[33m"
+#define RED           "\x1b[91m"
+#define CYAN          "\x1b[96m"
+#define PINK          "\x1b[95m"
+#define ORANGE        "\x1b[33m"
+
+// ghost flash colors
+#define GRAY          "\x1b[90m"
+#define BRIGHT_BLUE   "\x1b[96m"
 
 Vector2 mapDimensions;
+int ghostFlash = 0;
 
 void setupMap() {
 	mapDimensions.x = getWidth();
@@ -32,7 +36,7 @@ void renderGame() {
 	printf(" ");
 	for (int y = 0; y < mapDimensions.y; y++) {
 		for (int x = 0; x < mapDimensions.x; x++) {
-			
+			ghostFlash = !ghostFlash;
 			if (isPlayerHere(x, y)) {
 				renderPlayer(getPlayerDirection());
 				x++;
@@ -89,6 +93,14 @@ void renderPlayer(Direction direction) {
 }
 
 void renderGhost(int ghostId) {
+	if (isGhostFrightened(ghostId)) {
+		if (ghostFlash) {
+			printf(BRIGHT_BLUE "M " RESET_COLOR);
+			return;
+		}
+		printf(GRAY "M " RESET_COLOR);
+		return;
+	}
 	switch (ghostId)
 	{
 	case 1:

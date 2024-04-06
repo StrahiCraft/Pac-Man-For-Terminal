@@ -7,19 +7,87 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+Vector2 ghostSpawns[4];
+
 Vector2 blinkyPos;
 Vector2 pinkyPos;
 Vector2 inkyPos;
 Vector2 clydePos;
 
-Vector2 ghostSpawns[4];
-
 Vector2* blinkyPath;
-int movementIndex = -1;
+Vector2* pinkyPath;
+Vector2* inkyPath;
+Vector2* clydePath;
+
+int blinkyMovementIndex = -1;
+int pinkyMovementIndex  = -1;
+int inkyMovementIndex   = -1;
+int clydeMovementIndex  = -1;
+
+GhostMode blinkyMode = SCATTER;
+GhostMode pinkyMode  = SCATTER;
+GhostMode inkyMode   = SCATTER;
+GhostMode clydeMode  = SCATTER;
 
 ExploredTile* exploredTiles;
 
 int exploredTilesIndex = 0;
+
+// ========================================================================
+// GHOST MOVEMENT SECTION
+// ========================================================================
+
+void moveBlinky() {
+	Vector2 endPos = getPlayerPos();
+
+	if (blinkyMode == SCATTER) {
+		endPos.x = getWidth() - 3;
+		endPos.y = 1;
+		blinkyMovementIndex = 0;
+	}
+
+	if (blinkyMode == FRIGHTENED) {
+		endPos = ghostSpawns[0];
+		blinkyMovementIndex = 0;
+	}
+
+	if (blinkyMode == CHASE && distance(blinkyPos, getPlayerPos()) < distance(getPlayerPos(), blinkyPath[0])) {
+		blinkyMovementIndex = 0;
+	}
+	if (blinkyMovementIndex < 1) {
+		refreshExploredTiles();
+		free(blinkyPath);
+		blinkyPath = (Vector2*)calloc(getHeight() * getWidth(), sizeof(Vector2));
+		blinkyMovementIndex = pathfind(blinkyPos, endPos, blinkyPath) - 1;
+	}
+	blinkyPos = *(blinkyPath + blinkyMovementIndex--);
+
+	if (blinkyPos.x == endPos.x && blinkyPos.y == endPos.y) {
+		if (blinkyMode == FRIGHTENED) {
+			blinkyMode = SCATTER;
+			return;
+		}
+		if (blinkyMode == SCATTER) {
+			blinkyMode = CHASE;
+		}
+	}
+}
+
+void movePinky() {
+
+}
+
+void moveInky() {
+
+}
+
+void moveClyde() {
+
+}
+
+// ========================================================================
+// GHOST MANAGEMENT SECTION
+// ========================================================================
 
 void setupGhost(int ghostId, int x, int y) {
 	switch (ghostId)
@@ -48,29 +116,28 @@ void setupGhost(int ghostId, int x, int y) {
 	ghostSpawns[ghostId - 1].y = y;
 }
 
-void moveBlinky() {
-	if (movementIndex != -1 && distance(blinkyPos, getPlayerPos()) < distance(getPlayerPos(), blinkyPath[0])) {
-		movementIndex = 0;
+void frightenGhosts() {
+	blinkyMode = FRIGHTENED;
+	pinkyMode  = FRIGHTENED;
+	inkyMode   = FRIGHTENED;
+	clydeMode  = FRIGHTENED;
+}
+
+int isGhostFrightened(int ghostId) {
+	switch (ghostId)
+	{
+	case 1:
+		return blinkyMode == FRIGHTENED;
+	case 2:
+		return pinkyMode == FRIGHTENED;
+	case 3:
+		return inkyMode == FRIGHTENED;
+	case 4:
+		return clydeMode == FRIGHTENED;
+	default:
+		return 0;
 	}
-	if (movementIndex < 0) {
-		refreshExploredTiles();
-		free(blinkyPath);
-		blinkyPath = (Vector2*)calloc(getHeight() * getWidth(), sizeof(Vector2));
-		movementIndex = pathfind(blinkyPos, getPlayerPos(), blinkyPath) - 1;
-	}
-	blinkyPos = *(blinkyPath + movementIndex--);
-}
-
-void movePinky() {
-
-}
-
-void moveInky() {
-
-}
-
-void moveClyde() {
-
+	return 0;
 }
 
 int isGhostHere(int x, int y) {
@@ -89,6 +156,10 @@ int isGhostHere(int x, int y) {
 	return 0;
 }
 
+// ========================================================================
+// MEMORY MANAGEMENT SECTION
+// ========================================================================
+
 void refreshExploredTiles() {
 	exploredTilesIndex = 0;
 	clearQueue();
@@ -96,6 +167,10 @@ void refreshExploredTiles() {
 	int maxTileCount = getHeight() * getWidth();
 	exploredTiles = (ExploredTile*)calloc(maxTileCount, sizeof(ExploredTile));
 }
+
+// ========================================================================
+// EXPLORED TILE MANAGEMENT SECTION
+// ========================================================================
 
 int isTileExplored(Vector2 tile) {
 	for (int i = 0; i < exploredTilesIndex; i++) {
@@ -114,6 +189,10 @@ int getTileAdress(Vector2 pos) {
 	}
 	return 0;
 }
+
+// ========================================================================
+// PATHFINDING SECTION
+// ========================================================================
 
 int pathfind(Vector2 startPos, Vector2 endPos, Vector2* ghostPath) {
 	enqueue(startPos);
@@ -185,3 +264,5 @@ int explore(Vector2 newPos, Vector2 endPos, ExploredTile* origin) {
 
 	return 0;
 }
+
+// ========================================================================

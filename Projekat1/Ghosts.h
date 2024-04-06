@@ -20,8 +20,12 @@ void movePinky();
 void moveInky();
 void moveClyde();
 
+void frightenGhosts();
 int isGhostHere(int x, int y);
+int isGhostFrightened(int ghostId);
+
 void refreshExploredTiles();
+
 int isTileExplored(Vector2 tile);
 int getTileAdress(Vector2 pos);
 int pathfind(Vector2 startPos, Vector2 endPos, Vector2* ghostPath);

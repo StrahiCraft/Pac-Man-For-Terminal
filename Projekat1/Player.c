@@ -1,6 +1,7 @@
 #include "Player.h"
 #include "Vectors.h"
 #include "Map.h"
+#include "Ghosts.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -126,7 +127,8 @@ void movePlayer() {
 
 	if (getCell(playerPos.x, playerPos.y) == 'o') {
 		setCell(playerPos.x, playerPos.y);
-		// big strong mode activate
+		
+		frightenGhosts();
 	}
 }
 
