@@ -7,15 +7,32 @@
 #include "Map.h"
 #include "Ghosts.h"
 
+int ghostMovement = 0;
+
+int ghostCheck() {
+	if (isGhostHere(getPlayerPos().x, getPlayerPos().y)) {
+		if (isGhostFrightened(isGhostHere(getPlayerPos().x, getPlayerPos().y))) {
+			eatGhost(isGhostHere(getPlayerPos().x, getPlayerPos().y));
+			Sleep(200);
+		}
+		else {
+			return 1;
+		}
+	}
+	return 0;
+}
+
 int main() {
 	int input = 0;
-	setupPlayer();
 
 	loadMap("map.txt");
 	setupMap();
 
 	while (input != 'q' && input != 27)
 	{
+		if (ghostCheck()) {
+			break;
+		}
 		if (kbhit()) {
 			input = getch();
 		}
@@ -23,10 +40,20 @@ int main() {
 		movePlayer();
 		changeDirection(getNextDirection());
 
+		if (ghostCheck()) {
+			break;
+		}
 		moveBlinky();
+		movePinky();
+
+		if (ghostCheck()) {
+			break;
+		}
 
 		renderGame();
 
+		ghostMovement++;
+		ghostMovement %= 4;
 		Sleep(200);
 		system("cls");
 	}

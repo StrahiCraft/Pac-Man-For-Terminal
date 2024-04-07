@@ -23,6 +23,7 @@ void moveClyde();
 void frightenGhosts();
 int isGhostHere(int x, int y);
 int isGhostFrightened(int ghostId);
+void eatGhost(int ghostId);
 
 void refreshExploredTiles();
 
@@ -30,5 +31,6 @@ int isTileExplored(Vector2 tile);
 int getTileAdress(Vector2 pos);
 int pathfind(Vector2 startPos, Vector2 endPos, Vector2* ghostPath);
 int explore(Vector2 newPos, Vector2 endPos, ExploredTile* origin);
+void offsetPosition(Vector2* pos, int xOffset, int yOffset);
 
 #endif // !GHOSTS_H_

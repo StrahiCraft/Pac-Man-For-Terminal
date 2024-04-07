@@ -64,6 +64,9 @@ void renderGame() {
 			case 'G':
 				printf("  ");
 				break;
+			case 'P':
+				printf("  ");
+				break;
 			default:
 				printf(WHITE "%c " RESET_COLOR, getCell(x, y));
 				break;

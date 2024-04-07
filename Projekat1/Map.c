@@ -4,6 +4,7 @@
 
 #include "Map.h"
 #include "Ghosts.h"
+#include "Player.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -36,6 +37,9 @@ void loadMap(char* name) {
 			if (*(map + width * y + x) == 'G') {
 				setupGhost(ghostId, x, y);
 				ghostId++;
+			}
+			if (*(map + width * y + x) == 'P') {
+				setupPlayer(x, y);
 			}
 		}
 	}

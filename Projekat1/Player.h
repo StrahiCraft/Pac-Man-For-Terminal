@@ -9,7 +9,7 @@ typedef enum Direction {
 	RIGHT
 }Direction;
 
-void setupPlayer();
+void setupPlayer(int x, int y);
 void handleInput(char input);
 void changeDirection(Direction dir);
 void movePlayer();

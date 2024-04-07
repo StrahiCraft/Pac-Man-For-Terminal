@@ -10,9 +10,9 @@ Direction currentDirection = RIGHT;
 Direction nextDirection = RIGHT;
 Vector2 playerPos;
 
-void setupPlayer() {
-	playerPos.x = 13;
-	playerPos.y = 18;
+void setupPlayer(int x, int y) {
+	playerPos.x = x;
+	playerPos.y = y;
 }
 
 void handleInput(char input) {

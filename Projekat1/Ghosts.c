@@ -74,7 +74,55 @@ void moveBlinky() {
 }
 
 void movePinky() {
+	Vector2 endPos = getPlayerPos();
 
+	if (pinkyMode == SCATTER) {
+		endPos.x = 1;
+		endPos.y = 1;
+		pinkyMovementIndex = 0;
+	}
+
+	if (pinkyMode == FRIGHTENED) {
+		endPos = ghostSpawns[1];
+		pinkyMovementIndex = 0;
+	}
+
+	if (pinkyMode == CHASE) {
+		switch (getPlayerDirection())
+		{
+		case UP:
+			offsetPosition(&endPos, 0, -4);
+			break;
+		case DOWN:
+			offsetPosition(&endPos, 0, 4);
+			break;
+		case LEFT:
+			offsetPosition(&endPos, -4, 0);
+			break;
+		case RIGHT:
+			offsetPosition(&endPos, 4, 0);
+			break;
+		default:
+			break;
+		}
+	}
+	if (pinkyMovementIndex < 1) {
+		refreshExploredTiles();
+		free(pinkyPath);
+		pinkyPath = (Vector2*)calloc(getHeight() * getWidth(), sizeof(Vector2));
+		pinkyMovementIndex = pathfind(pinkyPos, endPos, pinkyPath) - 1;
+	}
+	pinkyPos = *(pinkyPath + pinkyMovementIndex--);
+
+	if (pinkyPos.x == endPos.x && pinkyPos.y == endPos.y) {
+		if (pinkyMode == FRIGHTENED) {
+			pinkyMode = SCATTER;
+			return;
+		}
+		if (pinkyMode == SCATTER) {
+			pinkyMode = CHASE;
+		}
+	}
 }
 
 void moveInky() {
@@ -100,6 +148,7 @@ void setupGhost(int ghostId, int x, int y) {
 	case 2:
 		pinkyPos.x = x;
 		pinkyPos.y = y;
+		pinkyPath = (Vector2*)calloc(0, sizeof(Vector2));
 		break;
 	case 3:
 		inkyPos.x = x;
@@ -137,7 +186,6 @@ int isGhostFrightened(int ghostId) {
 	default:
 		return 0;
 	}
-	return 0;
 }
 
 int isGhostHere(int x, int y) {
@@ -154,6 +202,34 @@ int isGhostHere(int x, int y) {
 		return 4;
 	}
 	return 0;
+}
+
+void eatGhost(int ghostId) {
+	switch (ghostId)
+	{
+	case 1:
+		blinkyPos = ghostSpawns[0];
+		blinkyMovementIndex = 0;
+		blinkyMode = SCATTER;
+		break;
+	case 2:
+		pinkyPos = ghostSpawns[1];
+		pinkyMovementIndex = 0;
+		pinkyMode = SCATTER;
+		break;
+	case 3:
+		inkyPos = ghostSpawns[2];
+		inkyMovementIndex = 0;
+		inkyMode = SCATTER;
+		break;
+	case 4:
+		clydePos = ghostSpawns[3];
+		clydeMovementIndex = 0;
+		clydeMode = SCATTER;
+		break;
+	default:
+		break;
+	}
 }
 
 // ========================================================================
@@ -263,6 +339,32 @@ int explore(Vector2 newPos, Vector2 endPos, ExploredTile* origin) {
 	enqueue(newPos);
 
 	return 0;
+}
+
+void offsetPosition(Vector2* pos, int xOffset, int yOffset) {
+	pos->x += xOffset;
+	pos->y += yOffset;
+
+	if (pos->x < 0) {
+		pos->x = 1;
+	}
+
+	if (pos->y < 0) {
+		pos->y = 1;
+	}
+	
+	if (pos->x > getWidth() - 2) {
+		pos->x = getWidth() - 2;
+	}
+
+	if (pos->y > getHeight() - 2) {
+		pos->y = getHeight() - 2;
+	}
+
+	if (getCell(pos->x, pos->y) == '#') {
+		pos->x -= xOffset;
+		pos->y -= yOffset;
+	}
 }
 
 // ========================================================================
