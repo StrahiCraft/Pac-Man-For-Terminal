@@ -29,6 +29,8 @@ void refreshExploredTiles();
 
 int isTileExplored(Vector2 tile);
 int getTileAdress(Vector2 pos);
+int findClosestValidTile(Vector2 tile);
+
 int pathfind(Vector2 startPos, Vector2 endPos, Vector2* ghostPath);
 int explore(Vector2 newPos, Vector2 endPos, ExploredTile* origin);
 void offsetPosition(Vector2* pos, int xOffset, int yOffset);

@@ -6,6 +6,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 Vector2 ghostSpawns[4];
 
@@ -29,6 +30,8 @@ GhostMode pinkyMode  = SCATTER;
 GhostMode inkyMode   = SCATTER;
 GhostMode clydeMode  = SCATTER;
 
+Direction clydeDirection = RIGHT;
+
 ExploredTile* exploredTiles;
 
 int exploredTilesIndex = 0;
@@ -41,8 +44,8 @@ void moveBlinky() {
 	Vector2 endPos = getPlayerPos();
 
 	if (blinkyMode == SCATTER) {
-		endPos.x = getWidth() - 3;
-		endPos.y = 1;
+		endPos.x = 0;
+		endPos.y = 0;
 		blinkyMovementIndex = 0;
 	}
 
@@ -61,8 +64,7 @@ void moveBlinky() {
 		blinkyMovementIndex = pathfind(blinkyPos, endPos, blinkyPath) - 1;
 	}
 	blinkyPos = *(blinkyPath + blinkyMovementIndex--);
-
-	if (blinkyPos.x == endPos.x && blinkyPos.y == endPos.y) {
+	if (blinkyMovementIndex <= 0) {
 		if (blinkyMode == FRIGHTENED) {
 			blinkyMode = SCATTER;
 			return;
@@ -130,6 +132,19 @@ void moveInky() {
 }
 
 void moveClyde() {
+	Vector2 endPos = getPlayerPos();
+
+	if (clydeMode == SCATTER) {
+		endPos.x = getWidth() - 3;
+		endPos.y = getHeight() - 3;
+		clydeMovementIndex = 0;
+	}
+
+	if (clydeMode == FRIGHTENED) {
+		endPos = ghostSpawns[3];
+		clydeMovementIndex = 0;
+	}
+
 
 }
 
@@ -266,6 +281,18 @@ int getTileAdress(Vector2 pos) {
 	return 0;
 }
 
+int findClosestValidTile(Vector2 tile) {
+	int bestDistance = distance(tile, exploredTiles[0].position);
+	int bestDistanceIndex = 0;
+	for (int i = 1; i < exploredTilesIndex; i++) {
+		if (bestDistance > distance(tile, exploredTiles[i].position)) {
+			bestDistance = distance(tile, exploredTiles[i].position);
+			bestDistanceIndex = i;
+		}
+	}
+	return bestDistanceIndex;
+}
+
 // ========================================================================
 // PATHFINDING SECTION
 // ========================================================================
@@ -277,7 +304,6 @@ int pathfind(Vector2 startPos, Vector2 endPos, Vector2* ghostPath) {
 	{
 		Vector2 newPos = dequeue();
 		ExploredTile* currentTile = &exploredTiles[getTileAdress(newPos)];
-
 		if (newPos.x == endPos.x && newPos.y == endPos.y) {
 			break;
 		}
@@ -302,6 +328,11 @@ int pathfind(Vector2 startPos, Vector2 endPos, Vector2* ghostPath) {
 	}
 	ExploredTile* currentTile = &exploredTiles[exploredTilesIndex - 1];
 	int iteration = 0;
+
+	if (currentTile->position.x != endPos.x || currentTile->position.y != endPos.y) {
+		currentTile = &exploredTiles[findClosestValidTile(endPos)];
+	}
+
 	while (currentTile->origin != NULL)
 	{
 		ghostPath[iteration++] = currentTile->position;
@@ -327,6 +358,10 @@ int explore(Vector2 newPos, Vector2 endPos, ExploredTile* origin) {
 
 	newPos.y %= getHeight() - 1;
 	newPos.x %= getWidth() - 1;
+
+	if (isTileExplored(newPos)) {
+		return 0;
+	}
 
 	exploredTiles[exploredTilesIndex].position = newPos;
 	exploredTiles[exploredTilesIndex].origin = origin;
