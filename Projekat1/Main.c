@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <time.h>
 #include <Windows.h>
 #include <stdlib.h>
 
@@ -23,6 +24,7 @@ int ghostCheck() {
 }
 
 int main() {
+	srand(time(NULL));
 	int input = 0;
 
 	loadMap("map.txt");
@@ -45,6 +47,8 @@ int main() {
 		}
 		moveBlinky();
 		movePinky();
+
+		moveClyde();
 
 		if (ghostCheck()) {
 			break;

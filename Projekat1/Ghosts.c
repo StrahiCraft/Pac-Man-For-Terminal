@@ -43,9 +43,9 @@ int exploredTilesIndex = 0;
 void moveBlinky() {
 	Vector2 endPos = getPlayerPos();
 
-	if (blinkyMode == SCATTER) {
-		endPos.x = 0;
-		endPos.y = 0;
+	if (blinkyMode == SCATTER && blinkyMovementIndex == -1) {
+		endPos.x = rand() % getWidth();
+		endPos.y = rand() % getHeight();
 		blinkyMovementIndex = 0;
 	}
 
@@ -67,6 +67,7 @@ void moveBlinky() {
 	if (blinkyMovementIndex <= 0) {
 		if (blinkyMode == FRIGHTENED) {
 			blinkyMode = SCATTER;
+			blinkyMovementIndex = -1;
 			return;
 		}
 		if (blinkyMode == SCATTER) {
@@ -78,9 +79,9 @@ void moveBlinky() {
 void movePinky() {
 	Vector2 endPos = getPlayerPos();
 
-	if (pinkyMode == SCATTER) {
-		endPos.x = 1;
-		endPos.y = 1;
+	if (pinkyMode == SCATTER && pinkyMovementIndex == -1) {
+		endPos.x = rand() % getWidth();
+		endPos.y = rand() % getHeight();
 		pinkyMovementIndex = 0;
 	}
 
@@ -119,10 +120,16 @@ void movePinky() {
 	if (pinkyPos.x == endPos.x && pinkyPos.y == endPos.y) {
 		if (pinkyMode == FRIGHTENED) {
 			pinkyMode = SCATTER;
+			pinkyMovementIndex = -1;
 			return;
 		}
 		if (pinkyMode == SCATTER) {
 			pinkyMode = CHASE;
+			return;
+		}
+		if (pinkyMode == CHASE && distance(pinkyPos, getPlayerPos()) > 15) {
+			pinkyMode = SCATTER;
+			pinkyMovementIndex = -1;
 		}
 	}
 }
@@ -134,9 +141,9 @@ void moveInky() {
 void moveClyde() {
 	Vector2 endPos = getPlayerPos();
 
-	if (clydeMode == SCATTER) {
-		endPos.x = getWidth() - 3;
-		endPos.y = getHeight() - 3;
+	if (clydeMode == SCATTER && clydeMovementIndex == -1) {
+		endPos.x = rand() % getWidth();
+		endPos.y = rand() % getHeight();
 		clydeMovementIndex = 0;
 	}
 
@@ -145,7 +152,30 @@ void moveClyde() {
 		clydeMovementIndex = 0;
 	}
 
+	if (clydeMode == SCATTER && distance(clydePos, getPlayerPos()) < 9) {
+		endPos = getPlayerPos();
+		clydeMovementIndex = 0;
+		clydeMode = CHASE;
+	}
 
+	if (clydeMovementIndex < 1) {
+		refreshExploredTiles();
+		free(clydePath);
+		clydePath = (Vector2*)calloc(getHeight() * getWidth(), sizeof(Vector2));
+		clydeMovementIndex = pathfind(clydePos, endPos, clydePath) - 1;
+	}
+	clydePos = *(clydePath + clydeMovementIndex--);
+	if (clydePos.x == endPos.x && clydePos.y == endPos.y) {
+		if (clydeMode == FRIGHTENED) {
+			clydeMode = SCATTER;
+			clydeMovementIndex = -1;
+			return;
+		}
+		if (clydeMode == SCATTER) {
+			clydeMode = CHASE;
+			return;
+		}
+	}
 }
 
 // ========================================================================
