@@ -19,6 +19,7 @@ void moveBlinky();
 void movePinky();
 void moveInky();
 void moveClyde();
+void moveGhost(Vector2* ghostPos, Vector2* ghostPath, int* ghostMovementIndex, GhostMode ghostMode);
 
 void frightenGhosts();
 int isGhostHere(int x, int y);

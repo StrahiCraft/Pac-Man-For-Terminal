@@ -8,8 +8,6 @@
 #include "Map.h"
 #include "Ghosts.h"
 
-int ghostMovement = 0;
-
 int ghostCheck() {
 	if (isGhostHere(getPlayerPos().x, getPlayerPos().y)) {
 		if (isGhostFrightened(isGhostHere(getPlayerPos().x, getPlayerPos().y))) {
@@ -56,8 +54,6 @@ int main() {
 			break;
 		}
 
-		ghostMovement++;
-		ghostMovement %= 4;
 		Sleep(200);
 		system("cls");
 	}

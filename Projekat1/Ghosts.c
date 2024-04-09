@@ -30,11 +30,11 @@ GhostMode pinkyMode  = SCATTER;
 GhostMode inkyMode   = SCATTER;
 GhostMode clydeMode  = SCATTER;
 
-Direction clydeDirection = RIGHT;
-
 ExploredTile* exploredTiles;
 
 int exploredTilesIndex = 0;
+
+int ghostMovement = 0;
 
 // ========================================================================
 // GHOST MOVEMENT SECTION
@@ -63,7 +63,7 @@ void moveBlinky() {
 		blinkyPath = (Vector2*)calloc(getHeight() * getWidth(), sizeof(Vector2));
 		blinkyMovementIndex = pathfind(blinkyPos, endPos, blinkyPath) - 1;
 	}
-	blinkyPos = *(blinkyPath + blinkyMovementIndex--);
+	moveGhost(&blinkyPos, blinkyPath, &blinkyMovementIndex, blinkyMode);
 	if (blinkyMovementIndex <= 0) {
 		if (blinkyMode == FRIGHTENED) {
 			blinkyMode = SCATTER;
@@ -115,7 +115,7 @@ void movePinky() {
 		pinkyPath = (Vector2*)calloc(getHeight() * getWidth(), sizeof(Vector2));
 		pinkyMovementIndex = pathfind(pinkyPos, endPos, pinkyPath) - 1;
 	}
-	pinkyPos = *(pinkyPath + pinkyMovementIndex--);
+	moveGhost(&pinkyPos, pinkyPath, &pinkyMovementIndex, pinkyMode);
 
 	if (pinkyPos.x == endPos.x && pinkyPos.y == endPos.y) {
 		if (pinkyMode == FRIGHTENED) {
@@ -148,9 +148,10 @@ void moveInky() {
 		inkyMovementIndex = 0;
 	}
 
-	if (inkyMode == CHASE) {
+	if (inkyMode == CHASE && inkyMovementIndex == -1) {
 		Vector2 offset = getOffset(blinkyPos, getPlayerPos());
 		offsetPosition(&endPos, offset.x * 2, offset.y * 2);
+		inkyMovementIndex = 0;
 	}
 
 	if (inkyMovementIndex < 1) {
@@ -159,8 +160,7 @@ void moveInky() {
 		inkyPath = (Vector2*)calloc(getHeight() * getWidth(), sizeof(Vector2));
 		inkyMovementIndex = pathfind(inkyPos, endPos, inkyPath) - 1;
 	}
-	inkyPos = *(inkyPath + inkyMovementIndex--);
-
+	moveGhost(&inkyPos, inkyPath, &inkyMovementIndex, inkyMode);
 	if (inkyPos.x == endPos.x && inkyPos.y == endPos.y) {
 		if (inkyMode == FRIGHTENED) {
 			inkyMode = SCATTER;
@@ -169,17 +169,19 @@ void moveInky() {
 		}
 		if (inkyMode == SCATTER) {
 			inkyMode = CHASE;
-			return;
-		}
-		if (inkyMode == CHASE && distance(inkyPos, getPlayerPos()) > 9) {
-			inkyMode = SCATTER;
 			inkyMovementIndex = -1;
+			return;
 		}
 	}
 }
 
 void moveClyde() {
 	Vector2 endPos = getPlayerPos();
+
+	if (distance(clydePos, getPlayerPos()) > 8) {
+		clydeMode = SCATTER;
+		clydeMovementIndex = -1;
+	}
 
 	if (clydeMode == SCATTER && clydeMovementIndex == -1) {
 		endPos.x = rand() % getWidth();
@@ -198,13 +200,15 @@ void moveClyde() {
 		clydeMode = CHASE;
 	}
 
+
 	if (clydeMovementIndex < 1) {
 		refreshExploredTiles();
 		free(clydePath);
 		clydePath = (Vector2*)calloc(getHeight() * getWidth(), sizeof(Vector2));
 		clydeMovementIndex = pathfind(clydePos, endPos, clydePath) - 1;
 	}
-	clydePos = *(clydePath + clydeMovementIndex--);
+	moveGhost(&clydePos, clydePath, &clydeMovementIndex, clydeMode);
+	ghostMovement++;
 	if (clydePos.x == endPos.x && clydePos.y == endPos.y) {
 		if (clydeMode == FRIGHTENED) {
 			clydeMode = SCATTER;
@@ -216,6 +220,26 @@ void moveClyde() {
 			return;
 		}
 	}
+}
+
+void moveGhost(Vector2* ghostPos, Vector2* ghostPath, int* ghostMovementIndex, GhostMode ghostMode) {
+	switch (ghostMode)
+	{
+	case SCATTER:
+		if (ghostMovement % 3 == 1 || ghostMovement % 2 == 0) {
+			break;
+		}
+		return;
+	case FRIGHTENED:
+		if (ghostMovement % 2 == 0) {
+			break;
+		}
+		return;
+	default:
+		break;
+	}
+	*ghostPos = *(ghostPath + *ghostMovementIndex);
+	*ghostMovementIndex -= 1;
 }
 
 // ========================================================================
