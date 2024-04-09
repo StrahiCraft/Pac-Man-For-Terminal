@@ -135,7 +135,47 @@ void movePinky() {
 }
 
 void moveInky() {
+	Vector2 endPos = getPlayerPos();
 
+	if (inkyMode == SCATTER && inkyMovementIndex == -1) {
+		endPos.x = rand() % getWidth();
+		endPos.y = rand() % getHeight();
+		inkyMovementIndex = 0;
+	}
+
+	if (inkyMovementIndex == FRIGHTENED) {
+		endPos = ghostSpawns[2];
+		inkyMovementIndex = 0;
+	}
+
+	if (inkyMode == CHASE) {
+		Vector2 offset = getOffset(blinkyPos, getPlayerPos());
+		offsetPosition(&endPos, offset.x * 2, offset.y * 2);
+	}
+
+	if (inkyMovementIndex < 1) {
+		refreshExploredTiles();
+		free(inkyPath);
+		inkyPath = (Vector2*)calloc(getHeight() * getWidth(), sizeof(Vector2));
+		inkyMovementIndex = pathfind(inkyPos, endPos, inkyPath) - 1;
+	}
+	inkyPos = *(inkyPath + inkyMovementIndex--);
+
+	if (inkyPos.x == endPos.x && inkyPos.y == endPos.y) {
+		if (inkyMode == FRIGHTENED) {
+			inkyMode = SCATTER;
+			inkyMovementIndex = -1;
+			return;
+		}
+		if (inkyMode == SCATTER) {
+			inkyMode = CHASE;
+			return;
+		}
+		if (inkyMode == CHASE && distance(inkyPos, getPlayerPos()) > 9) {
+			inkyMode = SCATTER;
+			inkyMovementIndex = -1;
+		}
+	}
 }
 
 void moveClyde() {
@@ -424,11 +464,6 @@ void offsetPosition(Vector2* pos, int xOffset, int yOffset) {
 
 	if (pos->y > getHeight() - 2) {
 		pos->y = getHeight() - 2;
-	}
-
-	if (getCell(pos->x, pos->y) == '#') {
-		pos->x -= xOffset;
-		pos->y -= yOffset;
 	}
 }
 

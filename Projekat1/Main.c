@@ -47,14 +47,14 @@ int main() {
 		}
 		moveBlinky();
 		movePinky();
-
+		moveInky();
 		moveClyde();
+
+		renderGame();
 
 		if (ghostCheck()) {
 			break;
 		}
-
-		renderGame();
 
 		ghostMovement++;
 		ghostMovement %= 4;
