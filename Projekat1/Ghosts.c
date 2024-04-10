@@ -143,7 +143,7 @@ void moveInky() {
 		inkyMovementIndex = 0;
 	}
 
-	if (inkyMovementIndex == FRIGHTENED) {
+	if (inkyMode == FRIGHTENED) {
 		endPos = ghostSpawns[2];
 		inkyMovementIndex = 0;
 	}
@@ -159,6 +159,7 @@ void moveInky() {
 		free(inkyPath);
 		inkyPath = (Vector2*)calloc(getHeight() * getWidth(), sizeof(Vector2));
 		inkyMovementIndex = pathfind(inkyPos, endPos, inkyPath) - 1;
+		
 	}
 	moveGhost(&inkyPos, inkyPath, &inkyMovementIndex, inkyMode);
 	if (inkyPos.x == endPos.x && inkyPos.y == endPos.y) {
@@ -170,7 +171,6 @@ void moveInky() {
 		if (inkyMode == SCATTER) {
 			inkyMode = CHASE;
 			inkyMovementIndex = -1;
-			return;
 		}
 	}
 }
@@ -178,7 +178,7 @@ void moveInky() {
 void moveClyde() {
 	Vector2 endPos = getPlayerPos();
 
-	if (distance(clydePos, getPlayerPos()) > 8) {
+	if (distance(clydePos, getPlayerPos()) > 8 && clydeMode != FRIGHTENED) {
 		clydeMode = SCATTER;
 		clydeMovementIndex = -1;
 	}
@@ -199,8 +199,6 @@ void moveClyde() {
 		clydeMovementIndex = 0;
 		clydeMode = CHASE;
 	}
-
-
 	if (clydeMovementIndex < 1) {
 		refreshExploredTiles();
 		free(clydePath);
@@ -226,7 +224,7 @@ void moveGhost(Vector2* ghostPos, Vector2* ghostPath, int* ghostMovementIndex, G
 	switch (ghostMode)
 	{
 	case SCATTER:
-		if (ghostMovement % 3 == 1 || ghostMovement % 2 == 0) {
+		if (ghostMovement % 3 == 2 || ghostMovement % 3 == 1) {
 			break;
 		}
 		return;
