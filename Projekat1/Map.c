@@ -12,11 +12,14 @@ char* map;
 int width;
 int height;
 
+int pelletCount;
+
 void loadMap(char* name) {
 	FILE* mapFile = fopen(name, "r");
-	
 	width = 0;
 	height = 0;
+
+	pelletCount = 0;
 
 	char digit = '0';
 	while((digit = fgetc(mapFile)) != '\n')
@@ -41,6 +44,9 @@ void loadMap(char* name) {
 			if (*(map + width * y + x) == 'P') {
 				setupPlayer(x, y);
 			}
+			if (*(map + width * y + x) == '.') {
+				pelletCount++;
+			}
 		}
 	}
 
@@ -48,6 +54,9 @@ void loadMap(char* name) {
 }
 
 char getCell(int x, int y) {
+	if (x < 0 || y < 0 || x > getWidth() || y > getWidth()) {
+		return ' ';
+	}
 	return *(map + width * y + x);
 }
 
@@ -61,4 +70,12 @@ int getWidth() {
 
 int getHeight() {
 	return height;
+}
+
+int getPelletCount() {
+	return pelletCount;
+}
+
+void collectPellet() {
+	--pelletCount;
 }

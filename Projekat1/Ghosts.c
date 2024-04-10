@@ -178,7 +178,7 @@ void moveInky() {
 void moveClyde() {
 	Vector2 endPos = getPlayerPos();
 
-	if (distance(clydePos, getPlayerPos()) > 8 && clydeMode != FRIGHTENED) {
+	if (distance(clydePos, getPlayerPos()) > 8) {
 		clydeMode = SCATTER;
 		clydeMovementIndex = -1;
 	}
@@ -213,28 +213,12 @@ void moveClyde() {
 			clydeMovementIndex = -1;
 			return;
 		}
-		if (clydeMode == SCATTER) {
-			clydeMode = CHASE;
-			return;
-		}
 	}
 }
 
 void moveGhost(Vector2* ghostPos, Vector2* ghostPath, int* ghostMovementIndex, GhostMode ghostMode) {
-	switch (ghostMode)
-	{
-	case SCATTER:
-		if (ghostMovement % 3 == 2 || ghostMovement % 3 == 1) {
-			break;
-		}
+	if (ghostMovement % 2 == 0 && ghostMode == FRIGHTENED) {
 		return;
-	case FRIGHTENED:
-		if (ghostMovement % 2 == 0) {
-			break;
-		}
-		return;
-	default:
-		break;
 	}
 	*ghostPos = *(ghostPath + *ghostMovementIndex);
 	*ghostMovementIndex -= 1;

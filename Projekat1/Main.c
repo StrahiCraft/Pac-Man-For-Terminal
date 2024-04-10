@@ -7,6 +7,10 @@
 #include "Render.h"
 #include "Map.h"
 #include "Ghosts.h"
+#include "MainMenu.h"
+
+void* menuLoop();
+void* gameLoop();
 
 int ghostCheck() {
 	if (isGhostHere(getPlayerPos().x, getPlayerPos().y)) {
@@ -21,8 +25,7 @@ int ghostCheck() {
 	return 0;
 }
 
-int main() {
-	srand(time(NULL));
+void* gameLoop() {
 	int input = 0;
 
 	loadMap("map.txt");
@@ -54,8 +57,47 @@ int main() {
 			break;
 		}
 
+		if (getPelletCount() == 0) {
+			system("cls");
+			printf("You won!");
+			Sleep(3000);
+			break;
+		}
+
 		Sleep(200);
 		system("cls");
 	}
+
+	menuLoop();
+}
+
+void* menuLoop() {
+	int exitCode = 0;
+	while (1) {
+		renderLogo();
+
+		exitCode = navigateMenu(getch());
+		system("cls");
+		switch (exitCode)
+		{
+		case 1:
+			gameLoop();
+			break;
+		case 2:
+			// type in map name
+			break;
+		case 3:
+			return;
+		default:
+			break;
+		}
+	}
+}
+
+int main() {
+	srand(time(NULL));
+	
+	menuLoop();
+	
 	return 0;
 }

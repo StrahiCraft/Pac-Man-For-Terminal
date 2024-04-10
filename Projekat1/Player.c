@@ -122,7 +122,8 @@ void movePlayer() {
 
 	if (getCell(playerPos.x, playerPos.y) == '.') {
 		setCell(playerPos.x, playerPos.y);
-		// increase score
+		
+		collectPellet();
 	}
 
 	if (getCell(playerPos.x, playerPos.y) == 'o') {

@@ -129,6 +129,7 @@
   <ItemGroup>
     <ClCompile Include="Ghosts.c" />
     <ClCompile Include="Main.c" />
+    <ClCompile Include="MainMenu.c" />
     <ClCompile Include="Map.c" />
     <ClCompile Include="Player.c" />
     <ClCompile Include="Queue.c" />
@@ -137,6 +138,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Ghosts.h" />
+    <ClInclude Include="MainMenu.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Queue.h" />
