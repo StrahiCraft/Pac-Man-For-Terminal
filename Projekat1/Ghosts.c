@@ -234,20 +234,30 @@ void setupGhost(int ghostId, int x, int y) {
 	case 1:
 		blinkyPos.x = x;
 		blinkyPos.y = y;
+		blinkyMovementIndex = -1;
+		free(blinkyPath);
 		blinkyPath = (Vector2*)calloc(0, sizeof(Vector2));
 		break;
 	case 2:
 		pinkyPos.x = x;
 		pinkyPos.y = y;
+		pinkyMovementIndex = -1;
+		free(pinkyPath);
 		pinkyPath = (Vector2*)calloc(0, sizeof(Vector2));
 		break;
 	case 3:
 		inkyPos.x = x;
 		inkyPos.y = y;
+		inkyMovementIndex = -1;
+		free(inkyPath);
+		inkyPath = (Vector2*)calloc(0, sizeof(Vector2));
 		break;
 	case 4:
 		clydePos.x = x;
-		clydePos.y = y;
+		clydePos.y = y; 
+		clydeMovementIndex = -1;
+		free(clydePath);
+		clydePath = (Vector2*)calloc(0, sizeof(Vector2));
 		break;
 	default:
 		return;

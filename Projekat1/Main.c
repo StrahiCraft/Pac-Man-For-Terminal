@@ -54,6 +54,9 @@ void* gameLoop() {
 		renderGame();
 
 		if (ghostCheck()) {
+			system("cls");
+			printf("GAME OVER!");
+			Sleep(2000);
 			break;
 		}
 
@@ -67,8 +70,8 @@ void* gameLoop() {
 		Sleep(200);
 		system("cls");
 	}
-
-	menuLoop();
+	
+	system("cls");
 }
 
 void* menuLoop() {
@@ -76,6 +79,7 @@ void* menuLoop() {
 	while (1) {
 		renderLogo();
 
+		renderButtons();
 		exitCode = navigateMenu(getch());
 		system("cls");
 		switch (exitCode)
@@ -87,6 +91,7 @@ void* menuLoop() {
 			// type in map name
 			break;
 		case 3:
+			// exit game
 			return;
 		default:
 			break;

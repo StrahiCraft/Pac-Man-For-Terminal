@@ -13,6 +13,8 @@ Vector2 playerPos;
 void setupPlayer(int x, int y) {
 	playerPos.x = x;
 	playerPos.y = y;
+	currentDirection = RIGHT;
+	nextDirection = RIGHT;
 }
 
 void handleInput(char input) {

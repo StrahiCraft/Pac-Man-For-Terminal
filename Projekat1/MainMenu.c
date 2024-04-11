@@ -28,7 +28,13 @@ int navigateMenu(char input) {
 	if (input == 's' || input == 'd') {
 		selectedOption++;
 	}
-	selectedOption %= 3;
+
+	if (selectedOption > 2) {
+		selectedOption = 2;
+	}else if (selectedOption < 0) {
+		selectedOption = 0;
+	}
+
 	if (input == ' ') {
 		return selectedOption + 1;
 	}
@@ -39,5 +45,25 @@ int navigateMenu(char input) {
 }
 
 void renderButtons() {
-
+	if (selectedOption == 0) {
+		printf(YELLOW " >START\n\n" RESET_COLOR);
+	}
+	else
+	{
+		printf("  START\n\n");
+	}
+	if (selectedOption == 1) {
+		printf(YELLOW " >MAP_SELECT\n\n" RESET_COLOR);
+	}
+	else
+	{
+		printf("  MAP_SELECT\n\n");
+	}
+	if (selectedOption == 2) {
+		printf(RED " >QUIT\n\n" RESET_COLOR);
+	}
+	else
+	{
+		printf("  QUIT\n\n");
+	}
 }
