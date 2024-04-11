@@ -2,7 +2,7 @@
 #define MAP_H_
 #include "Vectors.h"
 
-void loadMap(char* mapName);
+int loadMap(char* mapName);
 char getCell(int x, int y);
 void setCell(int x, int y);
 int getWidth();

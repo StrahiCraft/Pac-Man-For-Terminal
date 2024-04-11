@@ -14,8 +14,14 @@ int height;
 
 int pelletCount;
 
-void loadMap(char* name) {
+int loadMap(char* name) {
 	FILE* mapFile = fopen(name, "r");
+
+	if (mapFile == NULL) {
+		fclose(mapFile);
+		return 1;
+	}
+
 	width = 0;
 	height = 0;
 
@@ -51,6 +57,7 @@ void loadMap(char* name) {
 	}
 
 	fclose(mapFile);
+	return 0;
 }
 
 char getCell(int x, int y) {

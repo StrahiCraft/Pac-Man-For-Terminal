@@ -9,8 +9,8 @@
 #include "Ghosts.h"
 #include "MainMenu.h"
 
-void* menuLoop();
-void* gameLoop();
+void menuLoop();
+void gameLoop();
 
 int ghostCheck() {
 	if (isGhostHere(getPlayerPos().x, getPlayerPos().y)) {
@@ -25,10 +25,10 @@ int ghostCheck() {
 	return 0;
 }
 
-void* gameLoop() {
+void gameLoop() {
 	int input = 0;
 
-	loadMap("map.txt");
+	//loadMap("map.txt");
 	setupMap();
 
 	while (input != 'q' && input != 27)
@@ -74,21 +74,30 @@ void* gameLoop() {
 	system("cls");
 }
 
-void* menuLoop() {
+void menuLoop() {
 	int exitCode = 0;
 	while (1) {
 		renderLogo();
 
 		renderButtons();
+		printf(CYAN"\n\n\n Game by: Strahinja Nikolic"RESET_COLOR);
 		exitCode = navigateMenu(getch());
 		system("cls");
+		char mapName[50];
 		switch (exitCode)
 		{
 		case 1:
+			printf("Enter map name: ");
+			gets_s(mapName, 50);
+			if (loadMap(mapName)) {
+				system("cls");
+				printf(RED "ERROR! MAP NOT FOUND!\n" RESET_COLOR);
+				break;
+			}
 			gameLoop();
 			break;
 		case 2:
-			// type in map name
+			
 			break;
 		case 3:
 			// exit game

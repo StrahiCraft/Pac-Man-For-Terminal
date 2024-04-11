@@ -1,2 +1,5 @@
-﻿  Ghosts.c
+﻿  Main.c
+E:\Fakultet\CS130\Projekat1\Projekat1\Projekat1\Main.c(39,7): warning C4013: 'kbhit' undefined; assuming extern returning int
+E:\Fakultet\CS130\Projekat1\Projekat1\Projekat1\Main.c(40,12): warning C4013: 'getch' undefined; assuming extern returning int
+E:\Fakultet\CS130\Projekat1\Projekat1\Projekat1\Main.c(112,8): warning C4244: 'function': conversion from 'time_t' to 'unsigned int', possible loss of data
   Projekat1.vcxproj -> E:\Fakultet\CS130\Projekat1\Projekat1\x64\Debug\Projekat1.exe
