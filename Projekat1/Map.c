@@ -18,7 +18,6 @@ int loadMap(char* name) {
 	FILE* mapFile = fopen(name, "r");
 
 	if (mapFile == NULL) {
-		fclose(mapFile);
 		return 1;
 	}
 

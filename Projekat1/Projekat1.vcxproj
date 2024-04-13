@@ -134,6 +134,7 @@
     <ClCompile Include="Player.c" />
     <ClCompile Include="Queue.c" />
     <ClCompile Include="Render.c" />
+    <ClCompile Include="Scoreboard.c" />
     <ClCompile Include="Vectors.c" />
   </ItemGroup>
   <ItemGroup>
@@ -143,7 +144,11 @@
     <ClInclude Include="Player.h" />
     <ClInclude Include="Queue.h" />
     <ClInclude Include="Render.h" />
+    <ClInclude Include="Scoreboard.h" />
     <ClInclude Include="Vectors.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="scoreboard.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

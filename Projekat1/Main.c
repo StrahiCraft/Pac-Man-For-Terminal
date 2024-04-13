@@ -8,14 +8,18 @@
 #include "Map.h"
 #include "Ghosts.h"
 #include "MainMenu.h"
+#include "Scoreboard.h"
 
 void menuLoop();
 void gameLoop();
+
+int score = 0;
 
 int ghostCheck() {
 	if (isGhostHere(getPlayerPos().x, getPlayerPos().y)) {
 		if (isGhostFrightened(isGhostHere(getPlayerPos().x, getPlayerPos().y))) {
 			eatGhost(isGhostHere(getPlayerPos().x, getPlayerPos().y));
+			score -= 2;
 			Sleep(200);
 		}
 		else {
@@ -27,8 +31,8 @@ int ghostCheck() {
 
 void gameLoop() {
 	int input = 0;
+	score = 0;
 
-	//loadMap("map.txt");
 	setupMap();
 
 	while (input != 'q' && input != 27)
@@ -62,12 +66,18 @@ void gameLoop() {
 
 		if (getPelletCount() == 0) {
 			system("cls");
-			printf("You won!");
-			Sleep(3000);
+			printf("You won!\nEnter your name: ");
+			char name[3];
+			for (int i = 0; i < 3; i++) {
+				name[i] = getch();
+				printf("%c", name[i]);
+			}
+			addScore(score, name);
 			break;
 		}
 
 		Sleep(200);
+		score += 2;
 		system("cls");
 	}
 	
@@ -97,7 +107,9 @@ void menuLoop() {
 			gameLoop();
 			break;
 		case 2:
-			
+			system("cls");
+			diplayScoreboard();
+			system("cls");
 			break;
 		case 3:
 			// exit game

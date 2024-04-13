@@ -53,11 +53,11 @@ void renderButtons() {
 		printf("  START\n\n");
 	}
 	if (selectedOption == 1) {
-		printf(YELLOW " >MAP_SELECT\n\n" RESET_COLOR);
+		printf(YELLOW " >SCOREBOARD\n\n" RESET_COLOR);
 	}
 	else
 	{
-		printf("  MAP_SELECT\n\n");
+		printf("  SCOREBOARD\n\n");
 	}
 	if (selectedOption == 2) {
 		printf(RED " >QUIT\n\n" RESET_COLOR);
