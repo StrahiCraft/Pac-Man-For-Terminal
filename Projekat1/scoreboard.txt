@@ -1,4 +1,1 @@
-
-14s STR
-
-51s AGE
+Scoreboard:

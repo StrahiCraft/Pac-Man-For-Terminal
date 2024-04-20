@@ -2,7 +2,4 @@
 E:\Fakultet\CS130\Projekat1\Projekat1\Projekat1\Main.c(43,7): warning C4013: 'kbhit' undefined; assuming extern returning int
 E:\Fakultet\CS130\Projekat1\Projekat1\Projekat1\Main.c(44,12): warning C4013: 'getch' undefined; assuming extern returning int
 E:\Fakultet\CS130\Projekat1\Projekat1\Projekat1\Main.c(124,8): warning C4244: 'function': conversion from 'time_t' to 'unsigned int', possible loss of data
-  Scoreboard.c
-E:\Fakultet\CS130\Projekat1\Projekat1\Projekat1\Scoreboard.c(20,2): warning C4013: 'getch' undefined; assuming extern returning int
-  Generating Code...
   Projekat1.vcxproj -> E:\Fakultet\CS130\Projekat1\Projekat1\x64\Debug\Projekat1.exe
